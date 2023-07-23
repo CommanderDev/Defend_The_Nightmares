@@ -3,7 +3,7 @@ return {
         {
             Name = "Nightmare";
             Health = 100;
-            Damage = 20;
+            Damage = 2;
         }
     }
 }

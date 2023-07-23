@@ -38,7 +38,6 @@ function ObjectsService:GetObjectByInstanceAsync( instance: Instance ): table
     local object: Instance | nil
     repeat
         object = self.Objects[ instance ]
-        print(object)
         task.wait()
     until object
 
