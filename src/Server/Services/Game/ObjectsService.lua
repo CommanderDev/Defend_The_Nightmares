@@ -58,6 +58,10 @@ function ObjectsService:KnitStart(): ()
             self.Objects[ instance ] = nil
         end
 
+        for _, instance: Instance in pairs( CollectionService:GetTagged(objectClass.Name) ) do
+            OnInstanceAdded(instance)
+        end
+
         CollectionService:GetInstanceAddedSignal(objectClass.Name):Connect(OnInstanceAdded)
         CollectionService:GetInstanceRemovedSignal(objectClass.Name):Connect(OnInstanceRemoved)
     end
