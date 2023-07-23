@@ -17,13 +17,13 @@ local Knit = require( game:GetService("ReplicatedStorage"):WaitForChild("Knit") 
 -- Modules
 local EnemyHelper = require( Knit.Helpers.EnemyHelper )
 
-local EnemyClass = require( Knit.Modules.Enemy )
-
+local ObjectsService = Knit.GetService("ObjectsService")
 -- Roblox Services
 local CollectionService = game:GetService("CollectionService")
 -- Variables
 
 -- Objects
+local EnemiesFolder: Folder = Knit.Assets.General.Enemies
 
 ---------------------------------------------------------------------
 
@@ -59,13 +59,18 @@ end
 -- Public functions
 
 function EnemyService:SpawnEnemy( enemyName: string ): ()
-    local enemyData = EnemyHelper.GetEnemyByName(enemyName)
     
     -- Initialize enemy
-    local enemy = EnemyClass.new(enemyData)
-    enemy:Spawn( _getRandomEnemySpawn().CFrame )
-    enemy:MoveTo( _getNearestBarrierFromPosition(enemy._instance.HumanoidRootPart.Position).Position )
-    table.insert(self.Enemies, enemy)
+    local enemy = EnemiesFolder[ enemyName ]:Clone()
+    enemy.Parent = workspace
+    CollectionService:AddTag(enemy, "Enemy")
+    
+    local enemyClass = ObjectsService:GetObjectByInstanceAsync(enemy)
+    enemyClass:MoveTo( _getNearestBarrierFromPosition(enemy.HumanoidRootPart.Position).Position )
+    --local enemy = EnemyClass.new(enemyData)
+    --enemy:Spawn( _getRandomEnemySpawn().CFrame )
+    --enemy:MoveTo( _getNearestBarrierFromPosition(enemy._instance.HumanoidRootPart.Position).Position )
+    --table.insert(self.Enemies, enemy)
 end
 
 function EnemyService:KnitStart(): ()

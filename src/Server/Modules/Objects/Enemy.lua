@@ -33,13 +33,14 @@ local Enemy = {}
 Enemy.__index = Enemy
 
 
-function Enemy.new( enemyData: table ): ( {} )
+function Enemy.new( instance: BasePart ): ( {} )
     local self = setmetatable( {}, Enemy )
     self._janitor = Janitor.new()
 
+    local enemyData = EnemyHelper.GetEnemyByName(instance.Name)
     -- Private variables
 
-    self._instance = EnemiesFolder[ enemyData.Name ]:Clone()
+    self._instance = instance
     self._humanoid = self._instance:WaitForChild("Humanoid")
     self._animator = self._humanoid:WaitForChild("Animator")
     -- Initialize path
@@ -51,6 +52,10 @@ function Enemy.new( enemyData: table ): ( {} )
             Path = 1
         }
     })
+
+    -- Preload animations
+    self._walkAnimation = self._animator:LoadAnimation( Animations.Walk )
+
     -- Public variables
     self.MaxHealth = enemyData.Health
     self.Health = enemyData.Health
@@ -63,12 +68,6 @@ function Enemy.new( enemyData: table ): ( {} )
     self._janitor:Add( self._path )
 
     return self
-end
-
-function Enemy:Spawn( spawnCFrame: CFrame ): ()
-    self._instance:PivotTo(spawnCFrame)
-    self._instance.Parent = workspace
-    self._walkAnimation = self._animator:LoadAnimation( Animations.Walk )
 end
 
 function Enemy:MoveTo( destination: Vector3 ): ()
