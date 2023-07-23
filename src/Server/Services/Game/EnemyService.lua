@@ -66,7 +66,7 @@ function EnemyService:SpawnEnemy( enemyName: string ): ()
     CollectionService:AddTag(enemy, "Enemy")
     
     local enemyClass = ObjectsService:GetObjectByInstanceAsync(enemy)
-    enemyClass:MoveTo( _getNearestBarrierFromPosition(enemy.HumanoidRootPart.Position).Position )
+    --enemyClass:MoveTo( _getNearestBarrierFromPosition(enemy.HumanoidRootPart.Position).Position )
     --local enemy = EnemyClass.new(enemyData)
     --enemy:Spawn( _getRandomEnemySpawn().CFrame )
     --enemy:MoveTo( _getNearestBarrierFromPosition(enemy._instance.HumanoidRootPart.Position).Position )
