@@ -1,6 +1,6 @@
 -- UIController
 -- Author(s): Jesse Appleton
--- Date: 03/01/2022
+-- Date: 03/01/2022 | Reformatted 7/23/2023
 
 --[[
     MEMBER      UIController.UIType: string?
@@ -42,6 +42,8 @@ local UIController = Knit.CreateController {
     HUDEnabledChanged = Signal.new();
     Screen = "HUD";
     ScreenChanged = Signal.new();
+    Menu = nil;
+    MenuChanged = Signal.new();
 }
 
 
@@ -60,6 +62,12 @@ function UIController:SetScreen( screenName: string ): ()
     end
 end
 
+function UIController:SetMenu( menuName: string ): ()
+    if( self.Menu ~= menuName ) then 
+        self.Menu = menuName
+        self.MenuChanged:Fire( menuName )
+    end
+end
 
 function UIController:KnitStart(): ()
     local function UpdateEnabledState(): ()
