@@ -44,8 +44,14 @@ local function _getNearestDefenseFromPosition( position: Vector3 ): BasePart
     local nearestDefense: BasePart | nil
     local nearestDistance: number | nil
 
-    -- Find the nearest Defense by magnitude
+    -- Find the nearest defense by magnitude
     for _, defense in pairs( Defenses )  do 
+        local defenseClass = ObjectsService:GetObjectByInstanceAsync(defense)
+
+        if( defenseClass.IsBroken ) then 
+            continue
+        end
+        
         local distance: number | nil = (position-defense.Point.Position).Magnitude
         if( not nearestDefense or distance < nearestDistance ) then
             nearestDefense = defense
@@ -66,7 +72,16 @@ function EnemyService:SpawnEnemy( enemyName: string ): ()
     CollectionService:AddTag(enemy, "Enemy")
     
     local enemyClass = ObjectsService:GetObjectByInstanceAsync(enemy)
-    enemyClass:MoveTo( _getNearestDefenseFromPosition(enemy.HumanoidRootPart.Position).Position )
+
+    while enemyClass do 
+        local nearestDefense = _getNearestDefenseFromPosition(enemy.HumanoidRootPart.Position).Position
+        -- Check if the Defense changed since last iteration
+        if( enemyClass.NearestDefense ~= nearestDefense ) then
+            enemyClass.NearestDefense = nearestDefense
+            enemyClass:MoveTo(nearestDefense)
+        end
+        task.wait()
+    end
 end
 
 function EnemyService:KnitStart(): ()
