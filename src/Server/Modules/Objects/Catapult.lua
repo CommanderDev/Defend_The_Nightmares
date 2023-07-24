@@ -16,6 +16,7 @@ local Janitor = require( Knit.Util.Janitor )
 local Promise = require( Knit.Util.Promise )
 
 -- Modules
+local PathfindingHelper = require( Knit.Helpers.PathfindingHelper )
 
 -- Roblox Services
 
@@ -30,11 +31,14 @@ local Catapult = {}
 Catapult.__index = Catapult
 
 
-function Catapult.new( instance ): ( {} )
+function Catapult.new( instance: Model ): ( {} )
     local self = setmetatable( {}, Catapult )
     self._janitor = Janitor.new()
 
-    print("Created catapult!")
+    local pathfindingModifier: PathfindingModifier = Instance.new("PathfindingModifier")
+    pathfindingModifier.Label = "Weapon"
+
+    PathfindingHelper.AddModifierToModel(instance, "Weapon")
 
     return self
 end
