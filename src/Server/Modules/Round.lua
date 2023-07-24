@@ -60,19 +60,6 @@ function Round.new( ): ( {} )
     return self
 end
 
-function Round:GetPlayerCash( player: Player ): ()
-    return self.PlayerCash[ player ]
-end
-
-function Round:GivePlayerCash( player: Player, cashAmount: number ): ()
-    if( not self.PlayerCash[ player ] ) then
-        self.PlayerCash[ player ] = cashAmount
-    else
-        self.PlayerCash[ player ] += cashAmount
-    end
-    print(self.PlayerCash[player])
-    CoreLoopService.Client.UpdatePlayerCash:Fire(player, self.PlayerCash[ player ])
-end
 
 function Round:Destroy(): ()
     self._janitor:Destroy()

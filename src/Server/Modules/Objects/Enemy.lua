@@ -49,6 +49,7 @@ function Enemy.new( instance: BasePart ): ( {} )
         AgentHeight = 5;
         WaypointSpacing = 3;
         Costs = {
+            Weapon = 100;
             Path = 1
         }
     })

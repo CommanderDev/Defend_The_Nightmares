@@ -21,6 +21,7 @@ local CollectionService = game:GetService("CollectionService")
 -- Variables
 
 -- Objects
+local ObjectsFolder: Folder = Knit.Assets.General.Objects
 
 ---------------------------------------------------------------------
 
@@ -45,6 +46,7 @@ function ObjectsService:GetObjectByInstanceAsync( instance: Instance ): table
 end
 
 function ObjectsService:KnitStart(): ()
+
     -- Iterate available object classes
     for _, objectClass in pairs( ObjectClasses:GetChildren() ) do
 
@@ -63,6 +65,11 @@ function ObjectsService:KnitStart(): ()
 
         CollectionService:GetInstanceAddedSignal(objectClass.Name):Connect(OnInstanceAdded)
         CollectionService:GetInstanceRemovedSignal(objectClass.Name):Connect(OnInstanceRemoved)
+    end
+
+    -- Give each object in the objects folder their unique tag
+    for _, object: Instance in pairs( ObjectsFolder:GetChildren() ) do 
+        CollectionService:AddTag(object, object.Name)
     end
 end
 

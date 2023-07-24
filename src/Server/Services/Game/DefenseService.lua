@@ -1,4 +1,4 @@
--- BarrierService
+-- DefenseService
 -- Author(s): Jesse Appleton
 -- Date: 07/23/2023
 
@@ -26,22 +26,22 @@ local RunService = game:GetService("RunService")
 ---------------------------------------------------------------------
 
 
-local BarrierService = Knit.CreateService {
-    Name = "BarrierService";
+local DefenseService = Knit.CreateService {
+    Name = "DefenseService";
     Client = {
         
     };
 
-    BarrierJanitor = Janitor.new()
+    DefenseJanitor = Janitor.new()
 }
 
-function BarrierService:KnitStart(): ()
+function DefenseService:KnitStart(): ()
 
-    local function _getNearestEnemyFromBarrier( barrierPosition: Vector3 ): Model
+    local function _getNearestEnemyFromDefense( DefensePosition: Vector3 ): Model
         local nearestEnemy: Model | nil
         local nearestDistance: number | nil
         for _, enemy in pairs( CollectionService:GetTagged("Enemy") ) do 
-            local distance = (barrierPosition-enemy.HumanoidRootPart.Position).Magnitude
+            local distance = (DefensePosition-enemy.HumanoidRootPart.Position).Magnitude
             if( not nearestEnemy or distance > nearestDistance ) then 
                 nearestEnemy = enemy
                 nearestDistance = distance
@@ -54,24 +54,22 @@ function BarrierService:KnitStart(): ()
     local tickCounter: number = 0
 
     local function OnHeartbeat( deltaTime: number ): ()
-
         if( tickCounter < TICK_COOLDOWN ) then 
             tickCounter += 1
             return
         end
 
 
-        for _, instance: Instance in pairs( CollectionService:GetTagged("Barrier") ) do 
-            local barrier = ObjectsService:GetObjectByInstanceAsync(instance)
-
-            -- Check if barrier should be active
-            if( barrier.Health > 0 ) then
-                local targetEnemy, targetDistance = _getNearestEnemyFromBarrier(instance.PrimaryPart.Position)
+        for _, instance: Instance in pairs( CollectionService:GetTagged("Defense") ) do 
+            local Defense = ObjectsService:GetObjectByInstanceAsync(instance)
+            -- Check if Defense should be active
+            if( Defense.Health > 0 ) then
+                local targetEnemy, targetDistance = _getNearestEnemyFromDefense(instance.Point.Position)
 
                 -- Check if target is within damaging range
-                if( targetDistance < 7 ) then
+                if( targetDistance < 2 ) then
                     local enemyObject = ObjectsService:GetObjectByInstanceAsync(targetEnemy)
-                    barrier:TakeDamage(enemyObject.Damage)
+                    Defense:TakeDamage(enemyObject.Damage)
                 end
             end
         end
@@ -84,9 +82,9 @@ function BarrierService:KnitStart(): ()
 end
 
 
-function BarrierService:KnitInit(): ()
+function DefenseService:KnitInit(): ()
     
 end
 
 
-return BarrierService
+return DefenseService

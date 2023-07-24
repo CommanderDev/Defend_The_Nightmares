@@ -1,6 +1,6 @@
--- HUDCash
+-- Spikes
 -- Author(s): Jesse Appleton
--- Date: 07/23/2023
+-- Date: 07/24/2023
 
 --[[
     
@@ -14,10 +14,10 @@
 local Knit = require( game:GetService("ReplicatedStorage"):WaitForChild("Knit") )
 local Janitor = require( Knit.Util.Janitor )
 local Promise = require( Knit.Util.Promise )
-local NumberUtility = require( Knit.Util.NumberUtility )
 
 -- Modules
-local DataController = Knit.GetController("DataController")
+local PathfindingHelper = require( Knit.Helpers.PathfindingHelper )
+
 -- Roblox Services
 
 -- Variables
@@ -27,27 +27,25 @@ local DataController = Knit.GetController("DataController")
 ---------------------------------------------------------------------
 
 
-local HUDCash = {}
-HUDCash.__index = HUDCash
+local Spikes = {}
+Spikes.__index = Spikes
 
 
-function HUDCash.new( holder: Frame ): ( {} )
-    local self = setmetatable( {}, HUDCash )
+function Spikes.new( instance: Model ): ( {} )
+    local self = setmetatable( {}, Spikes )
     self._janitor = Janitor.new()
+    
+    PathfindingHelper.AddModifierToModel(instance, "Weapon")
 
-    local function UpdateCash( playerCash: number ): ()
-        holder.Amount.Text = NumberUtility.FormatWithCommas(playerCash)
-    end
-
-    DataController:ObserveDataChanged("Cash", UpdateCash)
+    print("Spikes created!")
 
     return self
 end
 
 
-function HUDCash:Destroy(): ()
+function Spikes:Destroy(): ()
     self._janitor:Destroy()
 end
 
 
-return HUDCash
+return Spikes

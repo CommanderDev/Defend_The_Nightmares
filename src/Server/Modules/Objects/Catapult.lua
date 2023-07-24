@@ -1,4 +1,4 @@
--- HUDCash
+-- Catapult
 -- Author(s): Jesse Appleton
 -- Date: 07/23/2023
 
@@ -14,10 +14,10 @@
 local Knit = require( game:GetService("ReplicatedStorage"):WaitForChild("Knit") )
 local Janitor = require( Knit.Util.Janitor )
 local Promise = require( Knit.Util.Promise )
-local NumberUtility = require( Knit.Util.NumberUtility )
 
 -- Modules
-local DataController = Knit.GetController("DataController")
+local PathfindingHelper = require( Knit.Helpers.PathfindingHelper )
+
 -- Roblox Services
 
 -- Variables
@@ -27,27 +27,26 @@ local DataController = Knit.GetController("DataController")
 ---------------------------------------------------------------------
 
 
-local HUDCash = {}
-HUDCash.__index = HUDCash
+local Catapult = {}
+Catapult.__index = Catapult
 
 
-function HUDCash.new( holder: Frame ): ( {} )
-    local self = setmetatable( {}, HUDCash )
+function Catapult.new( instance: Model ): ( {} )
+    local self = setmetatable( {}, Catapult )
     self._janitor = Janitor.new()
 
-    local function UpdateCash( playerCash: number ): ()
-        holder.Amount.Text = NumberUtility.FormatWithCommas(playerCash)
-    end
+    local pathfindingModifier: PathfindingModifier = Instance.new("PathfindingModifier")
+    pathfindingModifier.Label = "Weapon"
 
-    DataController:ObserveDataChanged("Cash", UpdateCash)
+    PathfindingHelper.AddModifierToModel(instance, "Weapon")
 
     return self
 end
 
 
-function HUDCash:Destroy(): ()
+function Catapult:Destroy(): ()
     self._janitor:Destroy()
 end
 
 
-return HUDCash
+return Catapult

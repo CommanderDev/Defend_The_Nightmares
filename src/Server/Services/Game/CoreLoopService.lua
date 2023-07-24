@@ -30,7 +30,6 @@ local StatesFolder: Folder = Knit.Modules.States
 local CoreLoopService = Knit.CreateService {
     Name = "CoreLoopService";
     Client = {
-        UpdatePlayerCash = RemoteSignal.new()
     };
 }
 

@@ -38,22 +38,28 @@ local function _getRandomEnemySpawn(): BasePart
     return enemySpawns[ math.random(1, #enemySpawns) ]
 end
 
-local function _getNearestBarrierFromPosition( position: Vector3 ): BasePart
-    local barriers: ( { BasePart } ) = CollectionService:GetTagged("Barrier")
+local function _getNearestDefenseFromPosition( position: Vector3 ): BasePart
+    local Defenses: ( { BasePart } ) = CollectionService:GetTagged("Defense")
 
-    local nearestBarrier: BasePart | nil
+    local nearestDefense: BasePart | nil
     local nearestDistance: number | nil
 
-    -- Find the nearest barrier by magnitude
-    for _, barrier in pairs( barriers )  do 
-        local distance: number | nil
-        if( not nearestBarrier or distance < nearestDistance ) then
-            nearestBarrier = barrier
-            nearestDistance = (barrier.Point.Position-nearestBarrier.Point.Position).Magnitude
+    -- Find the nearest defense by magnitude
+    for _, defense in pairs( Defenses )  do 
+        local defenseClass = ObjectsService:GetObjectByInstanceAsync(defense)
+
+        if( defenseClass.IsBroken ) then 
+            continue
+        end
+        
+        local distance: number | nil = (position-defense.Point.Position).Magnitude
+        if( not nearestDefense or distance < nearestDistance ) then
+            nearestDefense = defense
+            nearestDistance = distance
         end
     end
 
-    return nearestBarrier.Point 
+    return nearestDefense.Point 
 end
 
 -- Public functions
@@ -66,11 +72,16 @@ function EnemyService:SpawnEnemy( enemyName: string ): ()
     CollectionService:AddTag(enemy, "Enemy")
     
     local enemyClass = ObjectsService:GetObjectByInstanceAsync(enemy)
-    enemyClass:MoveTo( _getNearestBarrierFromPosition(enemy.HumanoidRootPart.Position).Position )
-    --local enemy = EnemyClass.new(enemyData)
-    --enemy:Spawn( _getRandomEnemySpawn().CFrame )
-    --enemy:MoveTo( _getNearestBarrierFromPosition(enemy._instance.HumanoidRootPart.Position).Position )
-    --table.insert(self.Enemies, enemy)
+
+    while enemyClass do 
+        local nearestDefense = _getNearestDefenseFromPosition(enemy.HumanoidRootPart.Position).Position
+        -- Check if the Defense changed since last iteration
+        if( enemyClass.NearestDefense ~= nearestDefense ) then
+            enemyClass.NearestDefense = nearestDefense
+            enemyClass:MoveTo(nearestDefense)
+        end
+        task.wait()
+    end
 end
 
 function EnemyService:KnitStart(): ()
