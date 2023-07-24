@@ -16,7 +16,7 @@ local Janitor = require( Knit.Util.Janitor )
 local Promise = require( Knit.Util.Promise )
 
 -- Modules
-
+local CoreLoopService = Knit.GetService("CoreLoopService")
 -- Roblox Services
 
 -- Variables
@@ -50,7 +50,15 @@ function Defense.new( defenseModel: Model ): ( {} )
         self.Health = defenseModel:GetAttribute("Health") 
     end
 
+    local function OnStateChanged( stateName ): ()
+        if( stateName == "Intermission" ) then
+            self:Build()
+        end
+    end
+
+    CoreLoopService.StateChanged:Connect(OnStateChanged)
     defenseModel:GetAttributeChangedSignal("Health"):Connect(OnHealthChanged)
+
 
     -- Initialize Health bar
     self:UpdateHealthBar()
@@ -59,10 +67,11 @@ function Defense.new( defenseModel: Model ): ( {} )
 end
 
 function Defense:Build(): ()
-    self.Health = self.MaxHealth
+    self._instance:SetAttribute("Health", self.MaxHealth)
     self._ui.Enabled = true
-    self._instance.Barrier.Transparency = 0
-    self._instance.Barrier.CanCollide = true
+    self._instance.PrimaryPart.Transparency = 0
+    self._instance.PrimaryPart.CanCollide = true
+    self:UpdateHealthBar()
     self.IsBroken = false
 end
 

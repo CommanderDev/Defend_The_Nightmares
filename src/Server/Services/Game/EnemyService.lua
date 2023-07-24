@@ -73,19 +73,23 @@ function EnemyService:SpawnEnemy( enemyName: string ): ()
     
     local enemyClass = ObjectsService:GetObjectByInstanceAsync(enemy)
 
-    while enemyClass do 
-        local nearestDefense = _getNearestDefenseFromPosition(enemy.HumanoidRootPart.Position).Position
-        -- Check if the Defense changed since last iteration
-        if( enemyClass.NearestDefense ~= nearestDefense ) then
-            enemyClass.NearestDefense = nearestDefense
-            enemyClass:MoveTo(nearestDefense)
+    task.spawn(function()
+        while enemy and enemy:FindFirstChild("HumanoidRootPart") do 
+            local nearestDefense = _getNearestDefenseFromPosition(enemy.HumanoidRootPart.Position).Position
+            -- Check if the Defense changed since last iteration
+            if( enemyClass.NearestDefense ~= nearestDefense ) then
+                enemyClass.NearestDefense = nearestDefense
+                enemyClass:MoveTo(nearestDefense)
+            end
+            task.wait()
         end
-        task.wait()
-    end
+
+        -- Enemy no longer exists, destroy the class
+        enemyClass:Destroy()
+    end)
 end
 
 function EnemyService:KnitStart(): ()
-    self:SpawnEnemy("Nightmare")
 end
 
 

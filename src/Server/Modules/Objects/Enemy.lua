@@ -18,6 +18,8 @@ local Signal = require( Knit.Util.Signal )
 
 -- Modules
 local EnemyHelper = require( Knit.Helpers.EnemyHelper )
+local PathfindingHelper = require( Knit.Helpers.PathfindingHelper )
+
 -- Roblox Services
 local PathfindingService = game:GetService("PathfindingService")
 -- Variables
@@ -43,14 +45,17 @@ function Enemy.new( instance: BasePart ): ( {} )
     self._instance = instance
     self._humanoid = self._instance:WaitForChild("Humanoid")
     self._animator = self._humanoid:WaitForChild("Animator")
+
+
     -- Initialize path
     self._path = PathfindingService:CreatePath({
         AgentRadius = 0.05;
         AgentHeight = 5;
         WaypointSpacing = 3;
         Costs = {
+            Enemy = 80;
             Weapon = 100;
-            Path = 1
+            Path = 0.05
         }
     })
 
@@ -65,6 +70,7 @@ function Enemy.new( instance: BasePart ): ( {} )
     -- Initialize signals
     self.MoveToReached = Signal.new()
 
+    PathfindingHelper.AddModifierToModel(instance, "Enemy")
     self._janitor:Add( self._instance )
     self._janitor:Add( self._path )
 
@@ -72,6 +78,7 @@ function Enemy.new( instance: BasePart ): ( {} )
 end
 
 function Enemy:MoveTo( destination: Vector3 ): ()
+
     local success, errorMessage = pcall(function()
         self._path:ComputeAsync( self._instance.HumanoidRootPart.Position, destination)
     end)
@@ -112,7 +119,6 @@ function Enemy:MoveTo( destination: Vector3 ): ()
         self.reachedConnection = self._instance.Humanoid.MoveToFinished:Connect(OnMoveToFinished)
 
         self._nextWaypointIndex = 2
-        print("Moving enemy")
         self._humanoid:MoveTo( self._waypoints[self._nextWaypointIndex].Position )
     end
 end 

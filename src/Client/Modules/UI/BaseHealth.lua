@@ -47,6 +47,12 @@ function BaseHealth.new( holder: Frame ): ( {} )
     OnHealthChanged()
     base:GetAttributeChangedSignal("Health"):Connect(OnHealthChanged)
 
+    self._janitor:Add(function()
+        holder.Visible = false
+    end)
+
+    holder.Visible = true
+    
     return self
 end
 

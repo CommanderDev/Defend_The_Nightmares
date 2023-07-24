@@ -44,6 +44,10 @@ function WeaponShop.new( holder: Frame ): ( {} )
 
     UIController.MenuChanged:Connect(OnMenuChanged)
 
+    self._janitor:Add(function()
+        UIController:SetMenu()
+    end)
+    
     return self
 end
 

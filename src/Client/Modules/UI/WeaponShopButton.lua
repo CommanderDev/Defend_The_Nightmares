@@ -41,6 +41,12 @@ function WeaponShopButton.new( holder: TextButton ): ( {} )
     end
     holder.MouseButton1Click:Connect(OnButtonClicked)
 
+    self._janitor:Add(function()
+        holder.Visible = false
+    end)
+
+    holder.Visible = true
+    
     return self
 end
 

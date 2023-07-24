@@ -9,6 +9,7 @@
 ---------------------------------------------------------------------
 
 -- Constants
+local INTERMISSION_TIME = 10
 
 -- Knit
 local Knit = require( game:GetService("ReplicatedStorage"):WaitForChild("Knit") )
@@ -37,7 +38,7 @@ function InProgress.new(): ( {} )
     local self = setmetatable( {}, InProgress )
     self._janitor = Janitor.new()
 
-    self._round = Round.new()
+    self._round = Round.new(CoreLoopService:GetActivePlayers())
 
     local function OnRoundEnded(): ()
         CoreLoopService:SetState( Knit.Enums.State.Intermission)

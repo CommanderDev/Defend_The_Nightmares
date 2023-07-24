@@ -9,6 +9,7 @@
 ---------------------------------------------------------------------
 
 -- Constants
+local INTERMISSION_TIME = 10
 
 -- Knit
 local Knit = require( game:GetService("ReplicatedStorage"):WaitForChild("Knit") )
@@ -16,7 +17,7 @@ local Janitor = require( Knit.Util.Janitor )
 local Promise = require( Knit.Util.Promise )
 
 -- Modules
-
+local CoreLoopService = Knit.GetService("CoreLoopService")
 -- Roblox Services
 
 -- Variables
@@ -34,7 +35,16 @@ function Intermission.new( ): ( {} )
     local self = setmetatable( {}, Intermission )
     self._janitor = Janitor.new()
 
-    print("Begin intermission")
+    local function Run(): ()
+        for countdown = INTERMISSION_TIME, 1, -1 do 
+            CoreLoopService.Client.UpdateIntermissionTimer:FireAll(countdown)
+            task.wait(1)
+        end
+
+        CoreLoopService:SetState(Knit.Enums.State.InProgress)
+    end
+
+    task.spawn(Run)
 
     return self
 end

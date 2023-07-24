@@ -62,14 +62,29 @@ function DefenseService:KnitStart(): ()
 
         for _, instance: Instance in pairs( CollectionService:GetTagged("Defense") ) do 
             local Defense = ObjectsService:GetObjectByInstanceAsync(instance)
-            -- Check if Defense should be active
-            if( Defense.Health > 0 ) then
-                local targetEnemy, targetDistance = _getNearestEnemyFromDefense(instance.Point.Position)
 
-                -- Check if target is within damaging range
-                if( targetDistance < 2 ) then
-                    local enemyObject = ObjectsService:GetObjectByInstanceAsync(targetEnemy)
-                    Defense:TakeDamage(enemyObject.Damage)
+            if ( Defense.IsBroken ) then 
+                continue
+            end
+
+            for _, enemy in pairs( CollectionService:GetTagged("Enemy") ) do
+                local humanoidRootPart = enemy:FindFirstChild("HumanoidRootPart")
+
+                if( not humanoidRootPart ) then
+                    continue
+                end
+                local enemyZ = humanoidRootPart.Position.Z
+                local defenseZ = instance.Point.Position.Z
+                
+                -- Check if the enemy is within range to damage 
+                if( enemyZ-defenseZ < 2 ) then
+                    local enemyObject = ObjectsService:GetObjectByInstanceAsync(enemy)
+                    --print(instance, "Taking damage")
+
+                    -- Double check to make sure the defense didn't break
+                    if( not Defense.IsBroken ) then
+                        Defense:TakeDamage(enemyObject.Damage)
+                    end
                 end
             end
         end

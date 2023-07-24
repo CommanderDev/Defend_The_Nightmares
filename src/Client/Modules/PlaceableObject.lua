@@ -28,8 +28,6 @@ local Mouse = LocalPlayer:GetMouse()
 
 local camera: Camera = workspace.CurrentCamera
 
-local Base: BasePart = workspace.Map.Base
-
 ---------------------------------------------------------------------
 
 
@@ -62,7 +60,7 @@ function PlaceableObject.new( instance: Instance ): ( {} )
 
     -- Private variables
     self._instance = instance:Clone()
-    self._halfBaseSize = Base.Size * 0.5
+    self._halfBaseSize = workspace.Map.Base.Size * 0.5
 
     -- Check if the primary part exists, then base the size off that, otherwise base it off the model size
     self._halfInstanceSize = if self._instance.PrimaryPart then self._instance.PrimaryPart.Size * 0.5 else self._instance:GetExtentsSize() * 0.5
@@ -98,7 +96,7 @@ end
 
 function PlaceableObject:Update(): ()
     local MouseRay = Ray.new(Mouse.UnitRay.Origin, Mouse.UnitRay.Direction * 50)
-    local whitelist = {Base}
+    local whitelist = {workspace.Map.Base}
     local hit, position, normal = workspace:FindPartOnRayWithWhitelist(MouseRay, whitelist)
     local positionWithNormalFactoredIn: Vector3 = position + normal * self._halfInstanceSize
 
@@ -108,7 +106,7 @@ function PlaceableObject:Update(): ()
         rotation = hit.CFrame.Rotation
     end
 
-    local LocalSpace: Vector3 = Base.CFrame:PointToObjectSpace( (CFrame.new(positionWithNormalFactoredIn) * rotation.Position) )
+    local LocalSpace: Vector3 = workspace.Map.Base.CFrame:PointToObjectSpace( (CFrame.new(positionWithNormalFactoredIn) * rotation.Position) )
     
     -- Make sure instance doesn't leave the bounds of placement
     local ClampX = math.clamp(LocalSpace.X, -self._halfBaseSize.X + self._halfInstanceSize.X, self._halfBaseSize.X - self._halfInstanceSize.X)
@@ -122,10 +120,10 @@ function PlaceableObject:Update(): ()
     )
     LocalSpace = Vector3.new(
         math.round(LocalSpace.X), 
-        self._halfInstanceSize.Y + (Base.Size.Y/2),			
+        self._halfInstanceSize.Y + (workspace.Map.Base.Size.Y/2),			
         math.round(LocalSpace.Z)
     )
-    local WorldSpace = ( CFrame.new(Base.CFrame:PointToWorldSpace(LocalSpace)) * rotation ) * CFrame.Angles(0, math.rad(self._rotation), 0) 
+    local WorldSpace = ( CFrame.new(workspace.Map.Base.CFrame:PointToWorldSpace(LocalSpace)) * rotation ) * CFrame.Angles(0, math.rad(self._rotation), 0) 
     self._instance:PivotTo(WorldSpace)
     self.CFrame = WorldSpace
 end

@@ -41,6 +41,12 @@ function HUDCash.new( holder: Frame ): ( {} )
 
     DataController:ObserveDataChanged("Cash", UpdateCash)
 
+    self._janitor:Add(function()
+        holder.Visible = false
+    end)
+
+    holder.Visible = true
+    
     return self
 end
 
