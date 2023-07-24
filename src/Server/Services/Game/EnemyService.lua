@@ -46,10 +46,16 @@ local function _getNearestBarrierFromPosition( position: Vector3 ): BasePart
 
     -- Find the nearest barrier by magnitude
     for _, barrier in pairs( barriers )  do 
-        local distance: number | nil
+        local barrierClass = ObjectsService:GetObjectByInstanceAsync(barrier)
+
+        if( barrierClass.IsBroken ) then
+            continue
+        end 
+
+        local distance = (position-barrier.Point.Position).Magnitude
         if( not nearestBarrier or distance < nearestDistance ) then
             nearestBarrier = barrier
-            nearestDistance = (barrier.Point.Position-nearestBarrier.Point.Position).Magnitude
+            nearestDistance = distance
         end
     end
 
@@ -66,11 +72,16 @@ function EnemyService:SpawnEnemy( enemyName: string ): ()
     CollectionService:AddTag(enemy, "Enemy")
     
     local enemyClass = ObjectsService:GetObjectByInstanceAsync(enemy)
-    enemyClass:MoveTo( _getNearestBarrierFromPosition(enemy.HumanoidRootPart.Position).Position )
-    --local enemy = EnemyClass.new(enemyData)
-    --enemy:Spawn( _getRandomEnemySpawn().CFrame )
-    --enemy:MoveTo( _getNearestBarrierFromPosition(enemy._instance.HumanoidRootPart.Position).Position )
-    --table.insert(self.Enemies, enemy)
+
+    while enemyClass do 
+        local nearestBarrier = _getNearestBarrierFromPosition(enemy.HumanoidRootPart.Position).Position
+        -- Check if the barrier changed since last iteration
+        if( enemyClass.NearestBarrier ~= nearestBarrier ) then
+            enemyClass.NearestBarrier = nearestBarrier
+            enemyClass:MoveTo(nearestBarrier)
+        end
+        task.wait()
+    end
 end
 
 function EnemyService:KnitStart(): ()
