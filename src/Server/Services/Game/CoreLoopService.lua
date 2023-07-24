@@ -15,7 +15,6 @@ local Knit = require( game:GetService("ReplicatedStorage"):WaitForChild("Knit") 
 local RemoteSignal = require( Knit.Util.Remote.RemoteSignal )
 
 -- Modules
-local Enums = require( Knit.SharedModules.Enums )
 
 local StatesFolder: Folder = Knit.Modules.States
 
@@ -37,7 +36,7 @@ local CoreLoopService = Knit.CreateService {
 
 
 function CoreLoopService:KnitStart(): ()
-    self:SetState(Enums.State.InProgress)
+    self:SetState(Knit.Enums.State.InProgress)
 end
 
 function CoreLoopService:SetState( stateName: string ): ()

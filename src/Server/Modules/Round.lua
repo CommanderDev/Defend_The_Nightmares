@@ -14,11 +14,12 @@
 local Knit = require( game:GetService("ReplicatedStorage"):WaitForChild("Knit") )
 local Janitor = require( Knit.Util.Janitor )
 local Promise = require( Knit.Util.Promise )
+local Signal = require( Knit.Util.Signal )
 
 -- Modules
 local CoreLoopService = Knit.GetService("CoreLoopService")
 
-local RoundData = require( Knit.GameData.RoundData )
+local DefenseHelper = require( Knit.Helpers.DefenseHelper )
 -- Roblox Services
 
 -- Variables
@@ -36,17 +37,25 @@ function Round.new( ): ( {} )
     local self = setmetatable( {}, Round )
     self._janitor = Janitor.new()
 
-    --Public variables
-    self.PlayerCash = {}
+    local base = DefenseHelper.GetBaseDefense()
 
-    -- Give starter cash to players
-    for _, player in pairs( game.Players:GetPlayers() ) do 
-        self:GivePlayerCash(player, RoundData.STARTING_CASH)
+    -- Public variables
+    self.Winner = nil
+
+    -- Initalize signals
+    self.RoundEnded = Signal.new()
+
+    -- Private functions
+    local function OnBaseHealthChanged(): ()
+        if( base:GetAttribute("Health") == 0 ) then
+            self.Winner = "Enemies"
+            self.RoundEnded:Fire()
+        end
     end
 
-    self._janitor:Add( game.Players.PlayerAdded:Connect(function(player)
-        self:GivePlayerCash(player, RoundData.STARTING_CASH)
-    end), "Disconnect")
+    base:GetAttributeChangedSignal("Health"):Connect(OnBaseHealthChanged)
+
+    self._janitor:Add( self.RoundEnded, "Destroy")
 
     return self
 end

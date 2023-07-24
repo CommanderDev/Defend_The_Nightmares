@@ -39,6 +39,11 @@ function InProgress.new(): ( {} )
 
     self._round = Round.new()
 
+    local function OnRoundEnded(): ()
+        CoreLoopService:SetState( Knit.Enums.State.Intermission)
+    end
+
+    self._round.RoundEnded:Connect(OnRoundEnded)
     self._janitor:Add( self._round, "Destroy")
     return self
 end
