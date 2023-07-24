@@ -41,10 +41,18 @@ function Defense.new( defenseModel: Model ): ( {} )
 
     self._instance = defenseModel
 
-    -- Public variables
-    self.MaxHealth = defenseModel:GetAttribute("Health")
-    self.Health = self.MaxHealth
+    -- Set MaxHealth to the default health
+    self.Health = defenseModel:GetAttribute("Health")
+    self.MaxHealth = self.Health
+    defenseModel:SetAttribute( "MaxHealth", self.Health )
 
+    local function OnHealthChanged(): ()
+        self.Health = defenseModel:GetAttribute("Health") 
+    end
+
+    defenseModel:GetAttributeChangedSignal("Health"):Connect(OnHealthChanged)
+
+    -- Initialize Health bar
     self:UpdateHealthBar()
 
     return self
@@ -70,8 +78,13 @@ function Defense:UpdateHealthBar(): ()
 end
 
 function Defense:TakeDamage( damageAmount: number ): ()
-    self.Health = math.clamp( self.Health - damageAmount, 0, self.MaxHealth)
+    self._instance:SetAttribute( "Health", math.clamp( self.Health - damageAmount, 0, self.MaxHealth) )
     self:UpdateHealthBar()
+
+    -- Make sure the defense isn't the base
+    if( self.Health == 0 and not self._instance:GetAttribute("IsBase")) then
+        self:Break()
+    end
 end
 
 function Defense:Destroy(): ()
