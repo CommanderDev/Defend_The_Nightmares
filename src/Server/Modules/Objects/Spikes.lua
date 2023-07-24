@@ -1,6 +1,6 @@
--- Catapult
+-- Spikes
 -- Author(s): Jesse Appleton
--- Date: 07/23/2023
+-- Date: 07/24/2023
 
 --[[
     
@@ -26,23 +26,23 @@ local Promise = require( Knit.Util.Promise )
 ---------------------------------------------------------------------
 
 
-local Catapult = {}
-Catapult.__index = Catapult
+local Spikes = {}
+Spikes.__index = Spikes
 
 
-function Catapult.new( instance ): ( {} )
-    local self = setmetatable( {}, Catapult )
+function Spikes.new( instance: Instance ): ( {} )
+    local self = setmetatable( {}, Spikes )
     self._janitor = Janitor.new()
 
-    print("Created catapult!")
+    print("Spikes created!")
 
     return self
 end
 
 
-function Catapult:Destroy(): ()
+function Spikes:Destroy(): ()
     self._janitor:Destroy()
 end
 
 
-return Catapult
+return Spikes

@@ -17,8 +17,7 @@ local Promise = require( Knit.Util.Promise )
 local NumberUtility = require( Knit.Util.NumberUtility )
 
 -- Modules
-local CoreLoopService = Knit.GetService("CoreLoopService")
-
+local DataController = Knit.GetController("DataController")
 -- Roblox Services
 
 -- Variables
@@ -37,11 +36,10 @@ function HUDCash.new( holder: Frame ): ( {} )
     self._janitor = Janitor.new()
 
     local function UpdateCash( playerCash: number ): ()
-        print(playerCash)
         holder.Amount.Text = NumberUtility.FormatWithCommas(playerCash)
     end
 
-    CoreLoopService.UpdatePlayerCash:Connect(UpdateCash)
+    DataController:ObserveDataChanged("Cash", UpdateCash)
 
     return self
 end

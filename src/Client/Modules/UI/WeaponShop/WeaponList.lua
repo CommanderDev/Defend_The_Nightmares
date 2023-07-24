@@ -20,6 +20,8 @@ local WeaponData = require( Knit.GameData.WeaponData )
 
 local ItemEntry = require( Knit.Modules.UI.ItemEntry )
 
+local PlacementController = Knit.GetController("PlacementController")
+local DataController = Knit.GetController("DataController")
 -- Roblox Services
 
 -- Variables
@@ -51,12 +53,23 @@ function WeaponList.new( holder: ScrollingFrame ): ( {} )
         return entry
     end
 
-    for _, weapon in pairs( WeaponData.Weapons ) do
+    -- Sort weapon data by price
+    table.sort(WeaponData.Weapons, function(a, b)
+        return a.Price < b.Price
+    end)
+
+    for index, weapon in pairs( WeaponData.Weapons ) do
         local entry = _findOrCreateEntryByName(weapon.Name)
         entry:SetName(weapon.Name)
+        entry:SetPrice(weapon.Price)
+        entry:SetLayoutOrder(index)
         entry:SetParent(holder)
-
         local function OnEntryClicked(): ()
+
+            -- Check if player has enough cash
+            if( DataController:GetDataByName("Cash") >= weapon.Price ) then
+                PlacementController:SetPlaceableObject(weapon.Name)
+            end
         end
 
         entry._button.MouseButton1Click:Connect(OnEntryClicked)

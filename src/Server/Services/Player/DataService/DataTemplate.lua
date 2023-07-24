@@ -1,6 +1,7 @@
 local data = {
     Kills = 0;
     Level = 0;
+    Cash = 1000;
     build = game.ReplicatedStorage.GameVersion.Value;
 }
 
