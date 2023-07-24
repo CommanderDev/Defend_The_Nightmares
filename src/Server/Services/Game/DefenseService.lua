@@ -64,10 +64,10 @@ function DefenseService:KnitStart(): ()
             local Defense = ObjectsService:GetObjectByInstanceAsync(instance)
             -- Check if Defense should be active
             if( Defense.Health > 0 ) then
-                local targetEnemy, targetDistance = _getNearestEnemyFromDefense(instance.PrimaryPart.Position)
+                local targetEnemy, targetDistance = _getNearestEnemyFromDefense(instance.Point.Position)
 
                 -- Check if target is within damaging range
-                if( targetDistance < 7 ) then
+                if( targetDistance < 2 ) then
                     local enemyObject = ObjectsService:GetObjectByInstanceAsync(targetEnemy)
                     Defense:TakeDamage(enemyObject.Damage)
                 end
