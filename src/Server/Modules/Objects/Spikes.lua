@@ -16,6 +16,7 @@ local Janitor = require( Knit.Util.Janitor )
 local Promise = require( Knit.Util.Promise )
 
 -- Modules
+local PathfindingHelper = require( Knit.Helpers.PathfindingHelper )
 
 -- Roblox Services
 
@@ -30,9 +31,11 @@ local Spikes = {}
 Spikes.__index = Spikes
 
 
-function Spikes.new( instance: Instance ): ( {} )
+function Spikes.new( instance: Model ): ( {} )
     local self = setmetatable( {}, Spikes )
     self._janitor = Janitor.new()
+    
+    PathfindingHelper.AddModifierToModel(instance, "Weapon")
 
     print("Spikes created!")
 
