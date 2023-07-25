@@ -69,9 +69,17 @@ function Enemy.new( instance: BasePart ): ( {} )
 
     -- Initialize signals
     self.MoveToReached = Signal.new()
-
+    self.Ragdolled = Signal.new()
     PathfindingHelper.AddModifierToModel(instance, "Enemy")
 
+    local function OnRagdolledChanged(): ()
+        if( instance:GetAttribute("Ragdolled") ) then
+            self:MoveTo(instance.HumanoidRootPart)
+            self.Ragdolled:Fire()
+        end
+    end
+    instance:SetAttribute("Ragdolled", false)
+    instance:GetAttributeChangedSignal("Ragdolled"):Connect(OnRagdolledChanged)
     self._janitor:Add( self._path )
 
     return self
@@ -98,10 +106,14 @@ function Enemy:MoveTo( destination: Vector3 ): ()
         end
 
         local function OnMoveToFinished( reached: boolean ): ()
-            
+            if( self._instance:GetAttribute("Ragdolled") ) then
+                return
+            end
+
             if( not reached ) then 
                 return
             end
+
             -- Check if the destination isn't yet reached
             if( self._nextWaypointIndex < #self._waypoints ) then
                 self._nextWaypointIndex += 1

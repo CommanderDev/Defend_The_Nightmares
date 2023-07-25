@@ -49,6 +49,8 @@ function Round.new( players: { Player } ): ( {} )
     self.Winner = nil
     self.Players = players
 
+    self.Enemies = {}
+
     -- Initalize signals
     self.RoundEnded = Signal.new()
 
@@ -98,7 +100,18 @@ function Round:TeleportPlayersToLobby(): ()
     end
 end
 
+function Round:ClearEnemies(): ()
+    for _, enemy in pairs( self.Enemies ) do 
+        enemy._instance:Destroy()
+    end
+
+    table.clear(self.Enemies)
+end
+
 function Round:StartWave(): ()
+
+    self:ClearEnemies()
+
     local waveData = WaveHelper.GetWaveByIndex(self._wave)
 
     if( not waveData ) then
@@ -108,22 +121,27 @@ function Round:StartWave(): ()
     end
 
     local enemiesAlive: number = 0
-    for enemyName, amountOfEnemies in pairs( waveData.Enemies ) do
-        for index = 1, amountOfEnemies do 
-            local enemy = EnemyService:SpawnEnemy(enemyName)
 
-            enemiesAlive += 1
+    -- Sort enemies by amount
+    table.sort(waveData.Enemies, function(a, b)
+        print(a, b)
+        return a > b
+    end)
 
-            local function OnEnemyDied(): ()
-                enemiesAlive -= 1
-                if( enemiesAlive == 0 ) then
-                    self:StartWave()
-                end
+    for _, enemyName in pairs( waveData.Enemies ) do
+        local enemy = EnemyService:SpawnEnemy(enemyName)
+        enemiesAlive += 1
+
+        local function OnEnemyDied(): ()
+            enemiesAlive -= 1
+            if( enemiesAlive == 0 ) then
+                self:StartWave()
             end
-            
-            enemy._instance.Humanoid.Died:Connect(OnEnemyDied)
-            task.wait(1)
         end
+        
+        enemy.Ragdolled:Connect(OnEnemyDied)
+        table.insert(self.Enemies, enemy)
+        task.wait(1)
     end
     self._wave += 1
 end

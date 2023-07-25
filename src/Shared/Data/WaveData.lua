@@ -2,7 +2,11 @@ return {
     Waves = {
         {
             Enemies = {
-                Nightmare = 5;
+                "Nightmare";
+                "Nightmare";
+                "Nightmare";
+                "Nightmare";
+                "Brute";
             }
         }
     }

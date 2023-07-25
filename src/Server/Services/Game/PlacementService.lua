@@ -56,6 +56,7 @@ function PlacementService:KnitStart(): ()
             -- Clone and place object
             local objectClone: Instance = object:Clone()
             objectClone:PivotTo(placeCFrame)
+            objectClone:SetAttribute("Owner", player.Name)
             objectClone.Parent = workspace
             -- Take cash from player
             DataService:IncrementPlayerData(player, "Cash", -weaponData.Price)

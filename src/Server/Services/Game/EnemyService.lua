@@ -63,11 +63,11 @@ local function _getNearestDefenseFromPosition( position: Vector3 ): BasePart
 end
 
 -- Public functions
-
 function EnemyService:SpawnEnemy( enemyName: string ): table
     
     -- Initialize enemy
     local enemy = EnemiesFolder[ enemyName ]:Clone()
+    enemy:PivotTo( EnemyHelper.GetRandomEnemySpawn().CFrame )
     enemy.Parent = workspace
     CollectionService:AddTag(enemy, "Enemy")
     

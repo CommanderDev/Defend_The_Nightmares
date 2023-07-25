@@ -95,7 +95,7 @@ function PlaceableObject:UpdateColor(): ()
 end
 
 function PlaceableObject:Update(): ()
-    local MouseRay = Ray.new(Mouse.UnitRay.Origin, Mouse.UnitRay.Direction * 50)
+    local MouseRay = Ray.new(Mouse.UnitRay.Origin, Mouse.UnitRay.Direction * 150)
     local whitelist = {workspace.Map.Base}
     local hit, position, normal = workspace:FindPartOnRayWithWhitelist(MouseRay, whitelist)
     local positionWithNormalFactoredIn: Vector3 = position + normal * self._halfInstanceSize
