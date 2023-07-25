@@ -10,7 +10,7 @@
 
 -- Constants
 local SPIN_SPEED: number = 250
-local FLING_POWER: number = 400
+local FLING_POWER: number = 200
 
 -- Knit
 local Knit = require( game:GetService("ReplicatedStorage"):WaitForChild("Knit") )
@@ -48,7 +48,7 @@ function Spinner.new( instance: Model ): ( {} )
     end
 
     local function GetOwner(): ()
-        return game.Players[ instance:GetAttribute("Owner") ]
+        return game.Players:FindFirstChild("Owner")
     end
 
     local enemiesTouched: table = {}

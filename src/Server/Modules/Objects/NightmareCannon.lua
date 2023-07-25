@@ -29,7 +29,7 @@ local CollectionService = game:GetService("CollectionService")
 -- Variables
 
 -- Objects
-local Nightmare: Model = Knit.Assets.General.Enemies.Nightmare
+local Nightmare: Model = Knit.Assets.General.Enemies.CannonObject
 
 ---------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ function NightmareCannon.new( instance: Instance ): ( {} )
     local lastTick: number = os.clock()
 
     local function GetOwner(): ()
-        return game.Players[ instance:GetAttribute("Owner") ]
+        return game.Players:FindFirstChild("Owner")
     end
 
     local function ShootNightmare(): ()
@@ -54,6 +54,7 @@ function NightmareCannon.new( instance: Instance ): ( {} )
         nightmareClone.Parent = workspace
         nightmareClone.HumanoidRootPart.AssemblyLinearVelocity = instance.HumanoidPositionPart.CFrame.LookVector * 250
         EnemyHelper.RagDollEnemy(nightmareClone)
+        nightmareClone.Humanoid.Health = 0
         Debris:AddItem(nightmareClone, 5)
 
         local enemiesHit = {}

@@ -18,7 +18,7 @@ local Signal = require( Knit.Util.Signal )
 -- Modules
 local CoreLoopService = Knit.GetService("CoreLoopService")
 -- Roblox Services
-
+local SoundService = game:GetService("SoundService")
 -- Variables
 
 -- Objects
@@ -38,6 +38,16 @@ end
 function CoreLoopController:KnitStart(): ()
     
     local function OnStateChanged( stateName: string ): ()
+
+        if( stateName == "InProgress" ) then
+            SoundService.Music.Lobby:Stop()
+            SoundService.Music.Gameplay:Play()
+        elseif( stateName == "Conclusion" ) then
+            SoundService.Music.Gameplay:Stop()
+        elseif( stateName == "Intermission" ) then
+            SoundService.Music.Lobby:Play()
+        end
+
         self.StateChanged:Fire(stateName)
     end
 

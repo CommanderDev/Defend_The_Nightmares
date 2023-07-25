@@ -60,7 +60,7 @@ function Spikes.new( instance: Model ): ( {} )
     end
 
     local function GetOwner(): ()
-        return game.Players[ instance:GetAttribute("Owner") ]
+        return game.Players:FindFirstChild("Owner")
     end
 
     local enemiesOnSpike: table = {}

@@ -18,7 +18,7 @@ local Promise = require( Knit.Util.Promise )
 -- Modules
 
 -- Roblox Services
-
+local SoundService = game:GetService("SoundService")
 -- Variables
 
 -- Objects
@@ -47,6 +47,12 @@ end
 
 function RoundWinner:UpdateWinner( winner: string ): ()
     self._holder.Text = winner.." Win!"
+
+    if( winner == "Survivors" ) then
+        SoundService.SFX.WinSFX:Play()
+    else
+        SoundService.SFX.LoseSFX:Play()
+    end
 end
 
 function RoundWinner:Destroy(): ()

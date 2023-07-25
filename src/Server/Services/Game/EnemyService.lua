@@ -67,7 +67,15 @@ end
 
 function EnemyService:KillEnemy( killer: Player, enemy: Instance ): ()
     EnemyHelper.RagDollEnemy(enemy)
-    CashService:GiveCash(killer, enemy:GetAttribute("Reward"))
+    local humanoid = enemy:FindFirstChild("Humanoid")
+
+    if( humanoid ) then
+        enemy.Humanoid.Health = 0
+    end
+    -- Check if killer still exists
+    if( killer ) then
+        CashService:GiveCash(killer, enemy:GetAttribute("Reward"))
+    end
 end
 
 function EnemyService:SpawnEnemy( enemyName: string ): table
