@@ -69,8 +69,12 @@ end
 function Defense:Build(): ()
     self._instance:SetAttribute("Health", self.MaxHealth)
     self._ui.Enabled = true
-    self._instance.PrimaryPart.Transparency = 0
-    self._instance.PrimaryPart.CanCollide = true
+
+    -- Check if defense isn't the base
+    if( not self._instance:GetAttribute("IsBase") ) then
+        self._instance.PrimaryPart.Transparency = 0
+        self._instance.PrimaryPart.CanCollide = true
+    end
     self:UpdateHealthBar()
     self.IsBroken = false
 end

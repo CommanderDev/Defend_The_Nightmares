@@ -66,7 +66,7 @@ function Spikes.new( instance: Model ): ( {} )
     local enemiesOnSpike: table = {}
     local function OnSpikesTouched( hit: BasePart ): ()
         local isOnSpike: number = table.find(enemiesOnSpike, hit.Parent)
-        local isAEnemy: boolean = CollectionService:HasTag(hit.Parent, "Enemy") or CollectionService:HasTag(hit.Parent.Parent, "Enemy")
+        local isAEnemy: boolean = CollectionService:HasTag(hit.Parent, "Enemy")
         
         -- Check if hit is a enemy and hasn't already been hit
         if( ( not isOnSpike ) and isAEnemy and not hit.Parent:GetAttribute("Ragdolled") ) then

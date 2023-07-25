@@ -109,7 +109,10 @@ function Enemy:MoveTo( destination: Vector3 ): ()
                 return
             end
 
-            if( not reached ) then 
+            if( not reached ) then
+                self.blockedConnection:Disconnect()
+                self.reachedConnection:Disconnect() 
+                self:MoveTo(destination)
                 return
             end
 

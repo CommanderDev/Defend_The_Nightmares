@@ -8,6 +8,17 @@ return {
                 "Nightmare";
                 "Brute";
             }
+        };
+        
+        {
+        Enemies = {
+                "Nightmare";
+                "Speedster";
+                "Brute";   
+                "Speedster";
+                "Nightmare";
+                "Brute";
+            }
         }
     }
 }

@@ -89,13 +89,10 @@ function EnemyService:SpawnEnemy( enemyName: string ): table
                 enemyClass.NearestBarrier = nearestBarrier
 
                 -- Give enemy a random spot on the wall
-                local randomXPosition: number = math.random(-nearestBarrier.Position.X / 2, nearestBarrier.Position.X / 2)
+                local randomXPosition: number = if nearestBarrier.Parent:GetAttribute("IsBase") then math.random(-15, 15) else math.random(-20, 20)
                 local destination: Vector3 = Vector3.new(nearestBarrier.Position.X + randomXPosition, workspace.Map.Base.Position.Y, nearestBarrier.Position.Z + nearestBarrier.Size.Z / 2)
                 enemyClass:MoveTo(destination)
             end
-    
-            -- Enemy no longer exists, destroy the class
-            enemyClass:Destroy()
         end
     end)
 

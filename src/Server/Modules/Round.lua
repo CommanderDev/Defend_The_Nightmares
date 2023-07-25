@@ -9,7 +9,7 @@
 ---------------------------------------------------------------------
 
 -- Constants
-
+local WAVE_TIME: number = 5
 -- Knit
 local Knit = require( game:GetService("ReplicatedStorage"):WaitForChild("Knit") )
 local Janitor = require( Knit.Util.Janitor )
@@ -126,13 +126,17 @@ function Round:StartWave(): ()
         return
     end
 
-    local enemiesAlive: number = 0
+    for count = WAVE_TIME, 1, -1 do 
+        CoreLoopService.Client.UpdateWaveTimer:FireAll(count, self._wave)
+        task.wait(1)
+    end
+
+    local enemiesAlive: number = #waveData.Enemies
 
     -- Sort enemies by amount
 
     for _, enemyName in pairs( waveData.Enemies ) do
         local enemy = EnemyService:SpawnEnemy(enemyName)
-        enemiesAlive += 1
 
         local function OnEnemyDied(): ()
             enemiesAlive -= 1

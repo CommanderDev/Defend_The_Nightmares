@@ -77,12 +77,9 @@ function DefenseService:KnitStart(): ()
                 end
                 local enemyZ = humanoidRootPart.Position.Z
                 local defenseZ = instance.PrimaryPart.Position.Z
-                
                 -- Check if the enemy is within range to damage 
                 if( enemyZ-defenseZ < MAX_DISTANCE ) then
                     local enemyObject = ObjectsService:GetObjectByInstanceAsync(enemy)
-                    --print(instance, "Taking damage")
-
                     -- Double check to make sure the defense didn't break
                     if( not Defense.IsBroken ) then
                         Defense:TakeDamage(enemyObject.Damage)
