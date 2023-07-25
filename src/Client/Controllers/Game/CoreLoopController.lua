@@ -27,7 +27,8 @@ local CoreLoopService = Knit.GetService("CoreLoopService")
 
 local CoreLoopController = Knit.CreateController { 
     Name = "CoreLoopController";
-    StateChanged = Signal.new()
+    StateChanged = Signal.new();
+    ShowRoundWinner = Signal.new();
  }
 
 function CoreLoopController:GetState(): string  
@@ -39,8 +40,14 @@ function CoreLoopController:KnitStart(): ()
     local function OnStateChanged( stateName: string ): ()
         self.StateChanged:Fire(stateName)
     end
+
+    local function OnShowRoundWinner( winner: string ): ()
+        self.ShowRoundWinner:Fire(winner)
+    end
+
     OnStateChanged(CoreLoopService:GetState())
     CoreLoopService.StateChanged:Connect(OnStateChanged)
+    CoreLoopService.ShowRoundWinner:Connect(OnShowRoundWinner)
 end
 
 

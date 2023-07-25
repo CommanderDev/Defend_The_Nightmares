@@ -33,6 +33,7 @@ local CoreLoopService = Knit.CreateService {
     Client = {
         UpdateIntermissionTimer = RemoteSignal.new();
         StateChanged = RemoteSignal.new();
+        ShowRoundWinner = RemoteSignal.new();
     };
 
     StateChanged = Signal.new()

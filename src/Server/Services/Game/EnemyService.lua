@@ -52,14 +52,14 @@ local function _getNearestDefenseFromPosition( position: Vector3 ): BasePart
             continue
         end
         
-        local distance: number | nil = (position-defense.Point.Position).Magnitude
+        local distance: number | nil = (position-defense.PrimaryPart.Position).Magnitude
         if( not nearestDefense or distance < nearestDistance ) then
             nearestDefense = defense
             nearestDistance = distance
         end
     end
 
-    return nearestDefense.Point 
+    return nearestDefense.PrimaryPart 
 end
 
 -- Public functions
@@ -74,18 +74,22 @@ function EnemyService:SpawnEnemy( enemyName: string ): table
     local enemyClass = ObjectsService:GetObjectByInstanceAsync(enemy)
 
     task.spawn(function()
-        while enemy and enemy:FindFirstChild("HumanoidRootPart") do 
-            local nearestDefense = _getNearestDefenseFromPosition(enemy.HumanoidRootPart.Position).Position
-            -- Check if the Defense changed since last iteration
-            if( enemyClass.NearestDefense ~= nearestDefense ) then
-                enemyClass.NearestDefense = nearestDefense
-                enemyClass:MoveTo(nearestDefense)
-            end
-            task.wait()
-        end
+        while enemy:FindFirstChild("HumanoidRootPart") and enemyClass.Health > 0 do 
+            local nearestBarrier = _getNearestDefenseFromPosition(enemy.HumanoidRootPart.Position)
+            --local nearestBarrier = _getNearestBarrierFromPosition(enemy.HumanoidRootPart.Position).Position
+            -- Check if the barrier changed since last iteration
+            if( enemyClass.NearestBarrier ~= nearestBarrier ) then
+                enemyClass.NearestBarrier = nearestBarrier
 
-        -- Enemy no longer exists, destroy the class
-        enemyClass:Destroy()
+                -- Give enemy a random spot on the wall
+                local randomXPosition: number = math.random(-nearestBarrier.Position.X / 2, nearestBarrier.Position.X / 2)
+                local destination: Vector3 = Vector3.new(nearestBarrier.Position.X + randomXPosition, workspace.Map.Base.Position.Y, nearestBarrier.Position.Z + nearestBarrier.Size.Z / 2)
+                enemyClass:MoveTo(destination)
+            end
+    
+            -- Enemy no longer exists, destroy the class
+            enemyClass:Destroy()
+        end
     end)
 
     return enemyClass

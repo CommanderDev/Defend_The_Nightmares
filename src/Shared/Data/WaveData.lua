@@ -4,7 +4,7 @@ return {
             Enemies = {
                 "Nightmare";
                 "Nightmare";
-                "Nightmare";
+                "Speedster";
                 "Nightmare";
                 "Brute";
             }

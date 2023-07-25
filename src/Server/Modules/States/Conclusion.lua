@@ -1,6 +1,6 @@
--- InProgress
+-- Conclusion
 -- Author(s): Jesse Appleton
--- Date: 07/23/2023
+-- Date: 07/25/2023
 
 --[[
     
@@ -17,9 +17,6 @@ local Promise = require( Knit.Util.Promise )
 
 -- Modules
 local CoreLoopService = Knit.GetService("CoreLoopService")
-
-local Round = require( Knit.Modules.Round )
-
 -- Roblox Services
 
 -- Variables
@@ -29,29 +26,25 @@ local Round = require( Knit.Modules.Round )
 ---------------------------------------------------------------------
 
 
-local InProgress = {}
-InProgress.__index = InProgress
+local Conclusion = {}
+Conclusion.__index = Conclusion
 
 
-function InProgress.new(): ( {} )
-    local self = setmetatable( {}, InProgress )
+function Conclusion.new( ): ( {} )
+    local self = setmetatable( {}, Conclusion )
     self._janitor = Janitor.new()
 
-    self._round = Round.new(CoreLoopService:GetActivePlayers())
+    task.delay(5, function()
+        CoreLoopService:SetState(Knit.Enums.State.Intermission)
+    end)
 
-    local function OnRoundEnded( ): ()
-        CoreLoopService:SetState( Knit.Enums.State.Conclusion )
-    end
-
-    self._round.RoundEnded:Connect(OnRoundEnded)
-    self._janitor:Add( self._round, "Destroy")
     return self
 end
 
 
-function InProgress:Destroy(): ()
+function Conclusion:Destroy(): ()
     self._janitor:Destroy()
 end
 
 
-return InProgress
+return Conclusion

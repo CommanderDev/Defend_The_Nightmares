@@ -39,7 +39,6 @@ function Enemy.new( instance: BasePart ): ( {} )
     local self = setmetatable( {}, Enemy )
     self._janitor = Janitor.new()
 
-    local enemyData = EnemyHelper.GetEnemyByName(instance.Name)
     -- Private variables
 
     self._instance = instance
@@ -63,9 +62,9 @@ function Enemy.new( instance: BasePart ): ( {} )
     self._walkAnimation = self._animator:LoadAnimation( Animations.Walk )
 
     -- Public variables
-    self.MaxHealth = enemyData.Health
-    self.Health = enemyData.Health
-    self.Damage = enemyData.Damage
+    self.MaxHealth = instance:GetAttribute("Health")
+    self.Health = self.MaxHealth
+    self.Damage = instance:GetAttribute("Damage")
 
     -- Initialize signals
     self.MoveToReached = Signal.new()

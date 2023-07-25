@@ -9,7 +9,9 @@
 ---------------------------------------------------------------------
 
 -- Constants
-local TICK_COOLDOWN = 5;
+local TICK_COOLDOWN = 5
+local MAX_DISTANCE: number = 8
+
 -- Knit
 local Knit = require( game:GetService("ReplicatedStorage"):WaitForChild("Knit") )
 local Janitor = require( Knit.Util.Janitor )
@@ -74,10 +76,10 @@ function DefenseService:KnitStart(): ()
                     continue
                 end
                 local enemyZ = humanoidRootPart.Position.Z
-                local defenseZ = instance.Point.Position.Z
+                local defenseZ = instance.PrimaryPart.Position.Z
                 
                 -- Check if the enemy is within range to damage 
-                if( enemyZ-defenseZ < 2 ) then
+                if( enemyZ-defenseZ < MAX_DISTANCE ) then
                     local enemyObject = ObjectsService:GetObjectByInstanceAsync(enemy)
                     --print(instance, "Taking damage")
 
