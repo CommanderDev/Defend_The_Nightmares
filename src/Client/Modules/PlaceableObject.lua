@@ -67,7 +67,7 @@ function PlaceableObject.new( instance: Instance ): ( {} )
 
     self._instance.Parent = workspace
 
-    self._rotation = 180
+    self._rotation = self._instance:GetAttribute("DefaultRotation") or 180
 
     self:SetCancollide(false)
     self:UpdateColor()
