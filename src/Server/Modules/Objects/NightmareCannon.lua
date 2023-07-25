@@ -20,6 +20,7 @@ local Promise = require( Knit.Util.Promise )
 local EnemyHelper = require( Knit.Helpers.EnemyHelper )
 local PathfindingHelper = require( Knit.Helpers.PathfindingHelper )
 
+local EnemyService = Knit.GetService("EnemyService")
 -- Roblox Services
 local RunService = game:GetService("RunService")
 local Debris = game:GetService("Debris")
@@ -43,6 +44,10 @@ function NightmareCannon.new( instance: Instance ): ( {} )
 
     local lastTick: number = os.clock()
 
+    local function GetOwner(): ()
+        return game.Players[ instance:GetAttribute("Owner") ]
+    end
+
     local function ShootNightmare(): ()
         local nightmareClone = Nightmare:Clone()
         nightmareClone:PivotTo(instance.HumanoidPositionPart.CFrame)
@@ -61,7 +66,7 @@ function NightmareCannon.new( instance: Instance ): ( {} )
                 local isHit = table.find(enemiesHit, hit.Parent)
                 if( not isHit and isAEnemy and not hit.Parent:GetAttribute("Ragdolled") ) then
                     hit.Parent.HumanoidRootPart.AssemblyLinearVelocity = object.CFrame.LookVector + Vector3.new(0, 1, 0.5) * FLING_POWER
-                    EnemyHelper.RagDollEnemy(hit.Parent)
+                    EnemyService:KillEnemy( GetOwner(), hit.Parent)
                     table.insert(enemiesHit, hit.Parent)
                 end
             end

@@ -18,8 +18,9 @@ local Janitor = require( Knit.Util.Janitor )
 local Promise = require( Knit.Util.Promise )
 
 -- Modules
-local EnemyHelper = require( Knit.Helpers.EnemyHelper )
+local PathfindingHelper = require( Knit.Helpers.PathfindingHelper )
 
+local EnemyService = Knit.GetService("EnemyService")
 -- Roblox Services
 local RunService = game:GetService("RunService")
 local CollectionService = game:GetService("CollectionService")
@@ -46,6 +47,10 @@ function Spinner.new( instance: Model ): ( {} )
         instance.Spin.CFrame = instance.Spin.CFrame * CFrame.Angles(0, rotation, 0)
     end
 
+    local function GetOwner(): ()
+        return game.Players[ instance:GetAttribute("Owner") ]
+    end
+
     local enemiesTouched: table = {}
 
     local function OnSpinTouched( hit ): ()
@@ -56,14 +61,14 @@ function Spinner.new( instance: Model ): ( {} )
         if( not isEnemyTouched and isAEnemy ) then
             table.insert(enemiesTouched, hit.Parent)
             hit.Parent.Humanoid.PlatformStand = true
-
             -- Fling enemy
             hit.Parent.HumanoidRootPart.AssemblyLinearVelocity = instance.Spin.CFrame.LookVector + Vector3.new(0, 1, 0.5) * FLING_POWER
             -- Ragdoll enemy
-            EnemyHelper.RagDollEnemy(hit.Parent)
+            EnemyService:KillEnemy( GetOwner(), hit.Parent)
         end
     end
 
+    PathfindingHelper.AddModifierToModel( instance, "Weapon" )
     instance.Spin.Touched:Connect(OnSpinTouched)
     self._janitor:Add( RunService.Heartbeat:Connect(Spin) )
 

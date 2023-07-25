@@ -18,6 +18,7 @@ local Knit = require( game:GetService("ReplicatedStorage"):WaitForChild("Knit") 
 local EnemyHelper = require( Knit.Helpers.EnemyHelper )
 
 local ObjectsService = Knit.GetService("ObjectsService")
+local CashService = Knit.GetService("CashService")
 -- Roblox Services
 local CollectionService = game:GetService("CollectionService")
 -- Variables
@@ -63,6 +64,12 @@ local function _getNearestDefenseFromPosition( position: Vector3 ): BasePart
 end
 
 -- Public functions
+
+function EnemyService:KillEnemy( killer: Player, enemy: Instance ): ()
+    EnemyHelper.RagDollEnemy(enemy)
+    CashService:GiveCash(killer, enemy:GetAttribute("Reward"))
+end
+
 function EnemyService:SpawnEnemy( enemyName: string ): table
     
     -- Initialize enemy

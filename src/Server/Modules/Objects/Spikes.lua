@@ -17,9 +17,7 @@ local Promise = require( Knit.Util.Promise )
 
 -- Modules
 local PathfindingHelper = require( Knit.Helpers.PathfindingHelper )
-local EnemyHelper = require( Knit.Helpers.EnemyHelper )
-
-local CashService = Knit.GetService("CashService")
+local EnemyService = Knit.GetService("EnemyService")
 -- Roblox Services
 local CollectionService = game:GetService("CollectionService")
 local Debris = game:GetService("Debris")
@@ -71,23 +69,10 @@ function Spikes.new( instance: Model ): ( {} )
         local isAEnemy: boolean = CollectionService:HasTag(hit.Parent, "Enemy") or CollectionService:HasTag(hit.Parent.Parent, "Enemy")
         
         -- Check if hit is a enemy and hasn't already been hit
-        if( ( not isOnSpike ) and isAEnemy ) then
+        if( ( not isOnSpike ) and isAEnemy and not hit.Parent:GetAttribute("Ragdolled") ) then
             table.insert(enemiesOnSpike, hit.Parent)
-            --Delay spike deployment
             Deploy()
-
-            -- Prevent redeployment
-            CollectionService:RemoveTag(hit.Parent, "Enemy")
-            EnemyHelper.RagDollEnemy(hit.Parent)
-            --hit.Parent:BreakJoints()
-            --Debris:AddItem(hit.Parent, 5)
-
-            -- Give owner cash for kill
-
-            if( not hit.Parent ) then
-                return
-            end
-            CashService:GiveCash(GetOwner(), hit.Parent:GetAttribute("RewardPerKill"))
+            EnemyService:KillEnemy(GetOwner(), hit.Parent)
             task.wait(5)
             Disable()
             table.remove(enemiesOnSpike, isOnSpike)

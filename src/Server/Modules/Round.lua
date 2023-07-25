@@ -98,7 +98,11 @@ end
 
 function Round:TeleportPlayersToLobby(): ()
     for _, player: Player in pairs( self.Players ) do
-        player.Character:PivotTo( workspace.SpawnLocation.CFrame + Vector3.new(0, 3, 0) )
+
+        -- Check if player is still in game
+        if( player:IsDescendantOf(game) ) then
+            player.Character:PivotTo( workspace.SpawnLocation.CFrame + Vector3.new(0, 3, 0) )
+        end
     end
 end
 

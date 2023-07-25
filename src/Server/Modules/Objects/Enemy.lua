@@ -90,7 +90,7 @@ function Enemy:MoveTo( destination: Vector3 ): ()
         self._path:ComputeAsync( self._instance.HumanoidRootPart.Position, destination)
     end)
 
-    if( success and self._path.Status == Enum.PathStatus.Success ) then
+    if( success and self._path.Status == Enum.PathStatus.Success and self._instance and self._instance:FindFirstChild("Humanoid") ) then
         
         self._walkAnimation:Play()
         self._waypoints = self._path:GetWaypoints()
