@@ -9,5 +9,10 @@ return {
             Name = "Spikes";
             Price = 0;
         };
+
+        {
+            Name = "Nightmare Cannon";
+            Price = 250;
+        };
     }
 }
