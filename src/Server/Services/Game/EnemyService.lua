@@ -57,9 +57,10 @@ local function _getNearestBarrierFromPosition( position: Vector3 ): BasePart
             nearestBarrier = barrier
             nearestDistance = distance
         end
+        print(distance)
     end
-
-    return nearestBarrier.Point 
+    print(nearestBarrier)
+    return nearestBarrier.Barrier 
 end
 
 -- Public functions
@@ -74,11 +75,12 @@ function EnemyService:SpawnEnemy( enemyName: string ): ()
     local enemyClass = ObjectsService:GetObjectByInstanceAsync(enemy)
 
     while enemyClass do 
-        local nearestBarrier = _getNearestBarrierFromPosition(enemy.HumanoidRootPart.Position).Position
+        local nearestBarrier = _getNearestBarrierFromPosition(enemy.HumanoidRootPart.Position)
+        --local nearestBarrier = _getNearestBarrierFromPosition(enemy.HumanoidRootPart.Position).Position
         -- Check if the barrier changed since last iteration
         if( enemyClass.NearestBarrier ~= nearestBarrier ) then
             enemyClass.NearestBarrier = nearestBarrier
-            enemyClass:MoveTo(nearestBarrier)
+            enemyClass:MoveTo(nearestBarrier.Position.X, workspace.Map.Base.Position.Y, nearestBarrier.Position.Z)
         end
         task.wait()
     end
