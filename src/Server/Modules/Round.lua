@@ -114,6 +114,17 @@ function Round:ClearEnemies(): ()
     table.clear(self.Enemies)
 end
 
+function Round:GetEnemiesAliveCount(): number
+    local enemiesAlive: number = 0
+    for _, enemy in pairs( self.Enemies ) do 
+        if( not enemy._instance:GetAttribute("Ragdolled") ) then
+            enemiesAlive += 1
+        end
+    end
+
+    return enemiesAlive
+end
+
 function Round:StartWave(): ()
 
     self:ClearEnemies()
@@ -131,16 +142,12 @@ function Round:StartWave(): ()
         task.wait(1)
     end
 
-    local enemiesAlive: number = #waveData.Enemies
-
-    -- Sort enemies by amount
-
+    self._spawningEnemies = true
     for _, enemyName in pairs( waveData.Enemies ) do
         local enemy = EnemyService:SpawnEnemy(enemyName)
 
         local function OnEnemyDied(): ()
-            enemiesAlive -= 1
-            if( enemiesAlive == 0 ) then
+            if( not self._spawningEnemies and self:GetEnemiesAliveCount() == 0 ) then
                 self:StartWave()
             end
         end
@@ -149,6 +156,7 @@ function Round:StartWave(): ()
         table.insert(self.Enemies, enemy)
         task.wait(1)
     end
+    self._spawningEnemies = false
     self._wave += 1
 end
 
