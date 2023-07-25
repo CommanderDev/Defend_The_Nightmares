@@ -75,6 +75,13 @@ function WeaponList.new( holder: ScrollingFrame ): ( {} )
         entry._button.MouseButton1Click:Connect(OnEntryClicked)
     end
 
+    self._janitor:Add(function()
+        --Clear Entries
+        for _, entry in pairs( self.Entries ) do 
+            entry:Destroy()
+        end
+    end)
+    
     return self
 end
 

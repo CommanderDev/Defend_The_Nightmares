@@ -1,6 +1,6 @@
--- InProgress
+-- Intermission
 -- Author(s): Jesse Appleton
--- Date: 07/23/2023
+-- Date: 07/24/2023
 
 --[[
     
@@ -9,6 +9,7 @@
 ---------------------------------------------------------------------
 
 -- Constants
+local INTERMISSION_TIME = 5
 
 -- Knit
 local Knit = require( game:GetService("ReplicatedStorage"):WaitForChild("Knit") )
@@ -17,9 +18,6 @@ local Promise = require( Knit.Util.Promise )
 
 -- Modules
 local CoreLoopService = Knit.GetService("CoreLoopService")
-
-local Round = require( Knit.Modules.Round )
-
 -- Roblox Services
 
 -- Variables
@@ -29,29 +27,32 @@ local Round = require( Knit.Modules.Round )
 ---------------------------------------------------------------------
 
 
-local InProgress = {}
-InProgress.__index = InProgress
+local Intermission = {}
+Intermission.__index = Intermission
 
 
-function InProgress.new(): ( {} )
-    local self = setmetatable( {}, InProgress )
+function Intermission.new( ): ( {} )
+    local self = setmetatable( {}, Intermission )
     self._janitor = Janitor.new()
 
-    self._round = Round.new(CoreLoopService:GetActivePlayers())
+    local function Run(): ()
+        for countdown = INTERMISSION_TIME, 1, -1 do 
+            CoreLoopService.Client.UpdateIntermissionTimer:FireAll(countdown)
+            task.wait(1)
+        end
 
-    local function OnRoundEnded(): ()
-        CoreLoopService:SetState( Knit.Enums.State.Intermission)
+        CoreLoopService:SetState(Knit.Enums.State.InProgress)
     end
 
-    self._round.RoundEnded:Connect(OnRoundEnded)
-    self._janitor:Add( self._round, "Destroy")
+    task.spawn(Run)
+
     return self
 end
 
 
-function InProgress:Destroy(): ()
+function Intermission:Destroy(): ()
     self._janitor:Destroy()
 end
 
 
-return InProgress
+return Intermission

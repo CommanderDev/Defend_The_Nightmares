@@ -38,56 +38,64 @@ local function _getRandomEnemySpawn(): BasePart
     return enemySpawns[ math.random(1, #enemySpawns) ]
 end
 
-local function _getNearestBarrierFromPosition( position: Vector3 ): BasePart
-    local barriers: ( { BasePart } ) = CollectionService:GetTagged("Barrier")
+local function _getNearestDefenseFromPosition( position: Vector3 ): BasePart
+    local Defenses: ( { BasePart } ) = CollectionService:GetTagged("Defense")
 
-    local nearestBarrier: BasePart | nil
+    local nearestDefense: BasePart | nil
     local nearestDistance: number | nil
 
-    -- Find the nearest barrier by magnitude
-    for _, barrier in pairs( barriers )  do 
-        local barrierClass = ObjectsService:GetObjectByInstanceAsync(barrier)
+    -- Find the nearest defense by magnitude
+    for _, defense in pairs( Defenses )  do 
+        local defenseClass = ObjectsService:GetObjectByInstanceAsync(defense)
 
-        if( barrierClass.IsBroken ) then
+        if( defenseClass.IsBroken ) then 
             continue
-        end 
-
-        local distance = (position-barrier.Point.Position).Magnitude
-        if( not nearestBarrier or distance < nearestDistance ) then
-            nearestBarrier = barrier
+        end
+        
+        local distance: number | nil = (position-defense.PrimaryPart.Position).Magnitude
+        if( not nearestDefense or distance < nearestDistance ) then
+            nearestDefense = defense
             nearestDistance = distance
         end
-        print(distance)
     end
-    print(nearestBarrier)
-    return nearestBarrier.Barrier 
+
+    return nearestDefense.PrimaryPart 
 end
 
 -- Public functions
-
-function EnemyService:SpawnEnemy( enemyName: string ): ()
+function EnemyService:SpawnEnemy( enemyName: string ): table
     
     -- Initialize enemy
     local enemy = EnemiesFolder[ enemyName ]:Clone()
+    enemy:PivotTo( EnemyHelper.GetRandomEnemySpawn().CFrame )
     enemy.Parent = workspace
     CollectionService:AddTag(enemy, "Enemy")
     
     local enemyClass = ObjectsService:GetObjectByInstanceAsync(enemy)
 
-    while enemyClass do 
-        local nearestBarrier = _getNearestBarrierFromPosition(enemy.HumanoidRootPart.Position)
-        --local nearestBarrier = _getNearestBarrierFromPosition(enemy.HumanoidRootPart.Position).Position
-        -- Check if the barrier changed since last iteration
-        if( enemyClass.NearestBarrier ~= nearestBarrier ) then
-            enemyClass.NearestBarrier = nearestBarrier
-            enemyClass:MoveTo(nearestBarrier.Position.X, workspace.Map.Base.Position.Y, nearestBarrier.Position.Z)
+    task.spawn(function()
+        while enemy:FindFirstChild("HumanoidRootPart") and enemyClass.Health > 0 do 
+            local nearestBarrier = _getNearestDefenseFromPosition(enemy.HumanoidRootPart.Position)
+            --local nearestBarrier = _getNearestBarrierFromPosition(enemy.HumanoidRootPart.Position).Position
+            -- Check if the barrier changed since last iteration
+            if( enemyClass.NearestBarrier ~= nearestBarrier ) then
+                enemyClass.NearestBarrier = nearestBarrier
+
+                -- Give enemy a random spot on the wall
+                local randomXPosition: number = math.random(-nearestBarrier.Position.X / 2, nearestBarrier.Position.X / 2)
+                local destination: Vector3 = Vector3.new(nearestBarrier.Position.X + randomXPosition, workspace.Map.Base.Position.Y, nearestBarrier.Position.Z + nearestBarrier.Size.Z / 2)
+                enemyClass:MoveTo(destination)
+            end
+    
+            -- Enemy no longer exists, destroy the class
+            enemyClass:Destroy()
         end
-        task.wait()
-    end
+    end)
+
+    return enemyClass
 end
 
 function EnemyService:KnitStart(): ()
-    self:SpawnEnemy("Nightmare")
 end
 
 

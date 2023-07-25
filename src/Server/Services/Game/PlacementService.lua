@@ -33,8 +33,15 @@ local PlacementService = Knit.CreateService {
     Client = {
         PlaceObject = RemoteSignal.new();
     };
+
+    PlacedObjects = {}
 }
 
+function PlacementService:ClearPlacedObjects(): ()
+    for _, object in pairs( self.PlacedObjects ) do
+        object:Destroy()
+    end
+end
 
 function PlacementService:KnitStart(): ()
     
@@ -49,9 +56,11 @@ function PlacementService:KnitStart(): ()
             -- Clone and place object
             local objectClone: Instance = object:Clone()
             objectClone:PivotTo(placeCFrame)
+            objectClone:SetAttribute("Owner", player.Name)
             objectClone.Parent = workspace
             -- Take cash from player
             DataService:IncrementPlayerData(player, "Cash", -weaponData.Price)
+            table.insert(self.PlacedObjects, objectClone)
         end
     end
 

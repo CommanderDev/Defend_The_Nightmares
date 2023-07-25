@@ -17,6 +17,7 @@ Knit.Modules = script.Parent.Modules
 --EXPOSE SHARED MODULES
 Knit.SharedModules = game.ReplicatedStorage.Shared.Modules
 Knit.Helpers = Knit.SharedModules.Helpers
+Knit.Enums = require( Knit.SharedModules.Enums )
 Knit.GameData = game.ReplicatedStorage.Shared.Data
 
 -- ENVIRONMENT SWITCHES

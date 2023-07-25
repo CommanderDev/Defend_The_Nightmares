@@ -1,15 +1,13 @@
 return {
     Weapons = {
         {
-            Name = "Catapult";
-            Damage = 50;
+            Name = "Spinner";
             Price = 100;
         };
 
         {
             Name = "Spikes";
-            Damage = 100;
             Price = 0;
-        }
+        };
     }
 }
