@@ -51,7 +51,11 @@ function ObjectsService:KnitStart(): ()
     for _, objectClass in pairs( ObjectClasses:GetChildren() ) do
 
         local function OnInstanceAdded( instance: Instance ): ()
-            self.Objects[ instance ] = require(objectClass).new(instance)
+
+            -- Only create classes that descend from workspace
+            if( instance:IsDescendantOf(workspace) ) then
+                self.Objects[ instance ] = require(objectClass).new(instance)
+            end
         end
 
         local function OnInstanceRemoved( instance: Instance ): ()
