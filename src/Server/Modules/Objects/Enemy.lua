@@ -54,7 +54,7 @@ function Enemy.new( instance: BasePart ): ( {} )
         WaypointSpacing = 3;
         Costs = {
             Enemy = 80;
-            Weapon = 100;
+            Weapon = 60;
             Path = 0.05
         }
     })
@@ -71,7 +71,7 @@ function Enemy.new( instance: BasePart ): ( {} )
     self.MoveToReached = Signal.new()
 
     PathfindingHelper.AddModifierToModel(instance, "Enemy")
-    self._janitor:Add( self._instance )
+
     self._janitor:Add( self._path )
 
     return self
