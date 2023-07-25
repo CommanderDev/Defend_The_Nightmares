@@ -87,8 +87,7 @@ function Spikes.new( instance: Model ): ( {} )
             if( not hit.Parent ) then
                 return
             end
-            local enemyData = EnemyHelper.GetEnemyByName(hit.Parent.Name)
-            CashService:GiveCash(GetOwner(), enemyData.RewardPerKill)
+            CashService:GiveCash(GetOwner(), hit.Parent:GetAttribute("RewardPerKill"))
             task.wait(5)
             Disable()
             table.remove(enemiesOnSpike, isOnSpike)

@@ -19,7 +19,7 @@ local Signal = require( Knit.Util.Signal )
 -- Modules
 local EnemyService = Knit.GetService("EnemyService")
 local PlacementService = Knit.GetService("PlacementService")
-
+local CoreLoopService = Knit.GetService("CoreLoopService")
 local DefenseHelper = require( Knit.Helpers.DefenseHelper )
 local WaveHelper = require( Knit.Helpers.WaveHelper )
 
@@ -74,6 +74,8 @@ end
 function Round:EndRound( winner: string ): ()
     self.Winner = winner
     self.RoundEnded:Fire()
+    CoreLoopService.Client.ShowRoundWinner:FireAll(winner)
+    task.wait(5)
     self:TeleportPlayersToLobby()
     PlacementService:ClearPlacedObjects()
     self:CleanEnemies()
@@ -123,10 +125,6 @@ function Round:StartWave(): ()
     local enemiesAlive: number = 0
 
     -- Sort enemies by amount
-    table.sort(waveData.Enemies, function(a, b)
-        print(a, b)
-        return a > b
-    end)
 
     for _, enemyName in pairs( waveData.Enemies ) do
         local enemy = EnemyService:SpawnEnemy(enemyName)

@@ -20,6 +20,7 @@ local WeaponShopButtonClass = require( Knit.Modules.UI.WeaponShopButton )
 local WeaponShopClass = require( Knit.Modules.UI.WeaponShop )
 local BaseHealthClass = require( Knit.Modules.UI.BaseHealth )
 local IntermissionClass = require( Knit.Modules.UI.IntermissionClass )
+local RoundWinnerClass = require( Knit.Modules.UI.RoundWinner )
 
 local UIController = Knit.GetController("UIController")
 local CoreLoopController = Knit.GetController("CoreLoopController")
@@ -34,7 +35,7 @@ local WeaponShopButton: TextButton = Knit.MainUI:WaitForChild("WeaponShopButton"
 local WeaponShop: Frame = Knit.MainUI:WaitForChild("WeaponShop")
 local BaseHealth: Frame = Knit.MainUI:WaitForChild("BaseHealth")
 local Intermission: Frame = Knit.MainUI:WaitForChild("Intermission")
-
+local WinnerLabel: TextLabel = Knit.MainUI:WaitForChild("WinnerLabel")
 ---------------------------------------------------------------------
 
 local HUD = Knit.CreateController { 
@@ -63,6 +64,14 @@ function HUD:KnitStart(): ()
         end
     end
 
+    local function OnShowRoundWinner( winner: string ): ()
+        local roundWinner = RoundWinnerClass.new(WinnerLabel)
+        roundWinner:UpdateWinner(winner)
+        task.wait(5)
+        roundWinner:Destroy()
+    end
+
+    CoreLoopController.ShowRoundWinner:Connect(OnShowRoundWinner)
     CoreLoopController.StateChanged:Connect(OnStateChanged)
 end
 
