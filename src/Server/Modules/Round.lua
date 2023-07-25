@@ -55,12 +55,7 @@ function Round.new( players: { Player } ): ( {} )
     -- Private functions
     local function OnBaseHealthChanged(): ()
         if( base:GetAttribute("Health") == 0 ) then
-            self.Winner = "Enemies"
-            self.RoundEnded:Fire()
-            self:TeleportPlayersToLobby()
-            PlacementService:ClearPlacedObjects()
-            self:CleanEnemies()
-            self:Destroy()
+            self:EndRound("Enemies")
         end
     end
 
@@ -69,9 +64,18 @@ function Round.new( players: { Player } ): ( {} )
         self:StartWave()
     end)
     base:GetAttributeChangedSignal("Health"):Connect(OnBaseHealthChanged)
-    self._janitor:Add( self.RoundEnded, "Destroy")
+    self._janitor:Add(self.RoundEnded)
 
     return self
+end
+
+function Round:EndRound( winner: string ): ()
+    self.Winner = winner
+    self.RoundEnded:Fire()
+    self:TeleportPlayersToLobby()
+    PlacementService:ClearPlacedObjects()
+    self:CleanEnemies()
+    self:Destroy()
 end
 
 function Round:CleanEnemies(): ()
@@ -97,12 +101,31 @@ end
 function Round:StartWave(): ()
     local waveData = WaveHelper.GetWaveByIndex(self._wave)
 
+    if( not waveData ) then
+        -- No more waves left, assume players win
+        self:EndRound("Survivors")
+        return
+    end
+
+    local enemiesAlive: number = 0
     for enemyName, amountOfEnemies in pairs( waveData.Enemies ) do
         for index = 1, amountOfEnemies do 
-            EnemyService:SpawnEnemy(enemyName)
+            local enemy = EnemyService:SpawnEnemy(enemyName)
+
+            enemiesAlive += 1
+
+            local function OnEnemyDied(): ()
+                enemiesAlive -= 1
+                if( enemiesAlive == 0 ) then
+                    self:StartWave()
+                end
+            end
+            
+            enemy._instance.Humanoid.Died:Connect(OnEnemyDied)
             task.wait(1)
         end
     end
+    self._wave += 1
 end
 
 function Round:Destroy(): ()

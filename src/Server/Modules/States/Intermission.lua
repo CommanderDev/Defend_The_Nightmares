@@ -9,7 +9,7 @@
 ---------------------------------------------------------------------
 
 -- Constants
-local INTERMISSION_TIME = 10
+local INTERMISSION_TIME = 5
 
 -- Knit
 local Knit = require( game:GetService("ReplicatedStorage"):WaitForChild("Knit") )

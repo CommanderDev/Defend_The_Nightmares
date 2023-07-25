@@ -49,7 +49,6 @@ function HUD:KnitStart(): ()
     HUDCash.new(CoinsDisplay)
 
     local function OnStateChanged( stateName: string ): ()
-        print(stateName)
         -- Clean active classes
         for _, class in pairs( self.ActiveClasses ) do
             class:Destroy()

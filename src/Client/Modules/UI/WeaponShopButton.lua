@@ -39,9 +39,11 @@ function WeaponShopButton.new( holder: TextButton ): ( {} )
         local menuName: string | nil = if UIController.Menu == "WeaponShop" then nil else "WeaponShop"
         UIController:SetMenu(menuName)
     end
-    holder.MouseButton1Click:Connect(OnButtonClicked)
+
+    self._janitor:Add( holder.MouseButton1Click:Connect(OnButtonClicked) )
 
     self._janitor:Add(function()
+        UIController:SetMenu()
         holder.Visible = false
     end)
 

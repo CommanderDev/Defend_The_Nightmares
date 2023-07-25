@@ -64,7 +64,7 @@ end
 
 -- Public functions
 
-function EnemyService:SpawnEnemy( enemyName: string ): ()
+function EnemyService:SpawnEnemy( enemyName: string ): table
     
     -- Initialize enemy
     local enemy = EnemiesFolder[ enemyName ]:Clone()
@@ -87,6 +87,8 @@ function EnemyService:SpawnEnemy( enemyName: string ): ()
         -- Enemy no longer exists, destroy the class
         enemyClass:Destroy()
     end)
+
+    return enemyClass
 end
 
 function EnemyService:KnitStart(): ()

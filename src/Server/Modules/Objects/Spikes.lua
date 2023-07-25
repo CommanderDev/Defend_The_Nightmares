@@ -59,7 +59,7 @@ function Spikes.new( instance: Model ): ( {} )
         end
     end
 
-    local enemiesOnSpike = {}
+    local enemiesOnSpike: table = {}
     local function OnSpikesTouched( hit: BasePart ): ()
         local isOnSpike: number = table.find(enemiesOnSpike, hit.Parent)
         local isAEnemy: boolean = CollectionService:HasTag(hit.Parent, "Enemy") or CollectionService:HasTag(hit.Parent.Parent, "Enemy")
@@ -69,13 +69,12 @@ function Spikes.new( instance: Model ): ( {} )
             Deploy()
 
             -- Prevent redeployment
-            --CollectionService:RemoveTag(hit.Parent, "Enemy")
+            CollectionService:RemoveTag(hit.Parent, "Enemy")
             hit.Parent:BreakJoints()
-            Debris:AddItem(hit.Parent)
+            Debris:AddItem(hit.Parent, 5)
             task.wait(5)
             Disable()
             table.remove(enemiesOnSpike, isOnSpike)
-
         end
     end
 

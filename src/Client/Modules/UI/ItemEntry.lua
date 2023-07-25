@@ -113,6 +113,8 @@ function ItemEntry.new( ): ( {} )
     self._priceLabel = self._holder:WaitForChild("PriceFrame"):WaitForChild("PriceLabel")
     self._button = self._holder:WaitForChild("Button")
 
+    self._janitor:Add(self._holder)
+
     return self
 end
 
